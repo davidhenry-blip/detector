@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>FREAK DETECTOR</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Anton&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hot-pink: #ff1f8f;
+    --electric: #00f0ff;
+    --gold: #ffcc00;
+    --deep: #0a0014;
+    --plum: #2a0030;
+    --danger: #ff0040;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+
+  body {
+    font-family: 'Anton', sans-serif;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255,31,143,0.35), transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(0,240,255,0.25), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,204,0,0.10), transparent 60%),
+      linear-gradient(180deg, var(--deep), var(--plum));
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(16px, 4vw, 40px) clamp(12px, 3vw, 32px);
+    padding-bottom: 230px; /* room for slider + audio player */
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 40px);
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Disco ball decorative scatter */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .stars span {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--gold), 0 0 24px var(--gold);
+    opacity: 0.7;
+    animation: twinkle 2.4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { transform: scale(0.6); opacity: 0.3; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  header {
+    text-align: center;
+    z-index: 5;
+    position: relative;
+    margin-top: 8px;
+  }
+  .title {
+    font-family: 'Bungee Inline', cursive;
+    font-size: clamp(2.2rem, 9vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: white;
+    text-shadow:
+      3px 3px 0 var(--hot-pink),
+      6px 6px 0 var(--electric),
+      9px 9px 30px rgba(0,0,0,0.6);
+    transform: rotate(-2deg);
+  }
+  .subtitle {
+    font-family: 'VT323', monospace;
+    font-size: clamp(0.9rem, 3.5vw, 1.4rem);
+    color: var(--gold);
+    margin-top: 12px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+
+  /* The meter */
+  .meter-wrap {
+    z-index: 5;
+    position: relative;
+    width: min(86vw, 380px);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .meter-svg { width: 100%; height: 100%; overflow: visible; }
+  .meter-bg { fill: rgba(0,0,0,0.6); stroke: var(--gold); stroke-width: 4; filter: drop-shadow(0 0 20px rgba(255,204,0,0.4)); }
+  .meter-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 22; stroke-linecap: round; }
+  .meter-fill {
+    fill: none;
+    stroke: url(#freakGradient);
+    stroke-width: 22;
+    stroke-linecap: butt;
+    stroke-dasharray: 0 1000;
+    transition: stroke-dasharray 0.08s linear;
+    filter: drop-shadow(0 0 12px var(--hot-pink));
+  }
+  .tick { stroke: rgba(255,255,255,0.5); stroke-width: 2; }
+  .tick-label { fill: rgba(255,255,255,0.7); font-family: 'VT323', monospace; font-size: 14px; }
+
+  .needle-pivot { fill: var(--gold); stroke: #000; stroke-width: 2; filter: drop-shadow(0 0 8px var(--gold)); }
+  .hand-stick {
+    stroke: white;
+    stroke-width: 4;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+  }
+  .hand-tip {
+    fill: var(--danger);
+    stroke: white;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px var(--danger)) drop-shadow(0 0 20px var(--danger));
+  }
+
+  .level-readout {
+    position: absolute;
+    bottom: -10px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Bungee Inline', cursive;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    color: var(--gold);
+    text-shadow: 0 0 20px var(--gold), 2px 2px 0 #000;
+    white-space: nowrap;
+  }
+
+  .freak-label {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+  }
+
+  .verdict {
+    z-index: 5;
+    position: relative;
+    text-align: center;
+    min-height: 4em;
+    font-family: 'Bungee Inline', cursive;
+    font-size: clamp(1.4rem, 5.5vw, 2.2rem);
+    line-height: 1.15;
+    color: white;
+    text-shadow: 0 0 24px currentColor;
+    padding: 0 20px;
+    transition: color 0.3s ease;
+    margin-bottom: 8px;
+  }
+
+  .instructions {
+    z-index: 5;
+    position: relative;
+    text-align: center;
+    font-family: 'VT323', monospace;
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
+    letter-spacing: 0.2em;
+    color: var(--electric);
+    text-transform: uppercase;
+    padding-bottom: 8px;
+  }
+  .instructions .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Start overlay */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 0, 20, 0.92);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    z-index: 100;
+    cursor: pointer;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay-title {
+    font-family: 'Bungee Inline', cursive;
+    font-size: clamp(2rem, 10vw, 5rem);
+    color: var(--hot-pink);
+    text-shadow: 4px 4px 0 var(--gold), 8px 8px 0 var(--electric);
+    margin-bottom: 30px;
+    transform: rotate(-3deg);
+  }
+  .overlay-cta {
+    font-family: 'VT323', monospace;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    border: 3px dashed var(--gold);
+    padding: 18px 36px;
+    animation: shimmer 1.2s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { box-shadow: 0 0 20px var(--gold); transform: scale(1); }
+    50% { box-shadow: 0 0 50px var(--hot-pink); transform: scale(1.04); }
+  }
+
+  /* Freaky mode shake */
+  @keyframes freakOut {
+    0%, 100% { transform: translate(0,0) rotate(0); }
+    20% { transform: translate(-4px, 2px) rotate(-0.6deg); }
+    40% { transform: translate(3px, -2px) rotate(0.6deg); }
+    60% { transform: translate(-3px, -1px) rotate(-0.4deg); }
+    80% { transform: translate(2px, 3px) rotate(0.4deg); }
+  }
+  body.freaking { animation: freakOut 0.18s linear infinite; }
+  body.freaking::before {
+    background:
+      repeating-linear-gradient(0deg, rgba(255,31,143,0.15) 0 2px, transparent 2px 6px),
+      repeating-linear-gradient(90deg, rgba(0,240,255,0.1) 0 2px, transparent 2px 40px);
+  }
+
+  /* Color of meter ring/glow per level */
+  body[data-level="0"] .verdict { color: rgba(255,255,255,0.5); }
+  body[data-level="1"] .verdict { color: var(--electric); }
+  body[data-level="2"] .verdict { color: var(--gold); }
+  body[data-level="3"] .verdict { color: var(--hot-pink); }
+  body[data-level="4"] .verdict { color: var(--danger); }
+
+  .footer {
+    z-index: 5;
+    position: relative;
+    font-family: 'VT323', monospace;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+
+  /* Slider control */
+  #slider-wrap {
+    position: fixed;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(420px, 92vw);
+    z-index: 50;
+    padding: 14px 18px 10px;
+    background: rgba(0,0,0,0.35);
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(255,204,0,0.25), inset 0 0 20px rgba(0,0,0,0.5);
+  }
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'VT323', monospace;
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+    text-shadow: 0 0 6px var(--gold);
+  }
+  #freakSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 18px;
+    background: linear-gradient(90deg, #00f0ff 0%, #ffcc00 50%, #ff1f8f 85%, #ff0040 92%, #ff0040 100%);
+    border-radius: 9px;
+    outline: none;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    cursor: pointer;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.4), 0 0 10px rgba(255,31,143,0.3);
+  }
+  #freakSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, var(--gold) 50%, #b8860b 100%);
+    border: 2px solid #000;
+    cursor: grab;
+    box-shadow: 0 0 12px var(--gold), 0 0 24px var(--hot-pink);
+  }
+  #freakSlider::-webkit-slider-thumb:active { cursor: grabbing; }
+  #freakSlider::-moz-range-thumb {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, var(--gold) 50%, #b8860b 100%);
+    border: 2px solid #000;
+    cursor: grab;
+    box-shadow: 0 0 12px var(--gold), 0 0 24px var(--hot-pink);
+  }
+
+  /* Audio player area, sits below the slider */
+  #audio-wrap {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(380px, 94vw);
+    z-index: 50;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #audio-wrap.armed {
+    border-color: var(--hot-pink);
+    box-shadow: 0 0 30px var(--hot-pink), 0 0 60px var(--danger);
+    animation: armedPulse 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes armedPulse {
+    from { box-shadow: 0 0 20px var(--hot-pink); }
+    to   { box-shadow: 0 0 50px var(--hot-pink), 0 0 80px var(--danger); }
+  }
+  .audio-label {
+    font-family: 'Bungee Inline', cursive;
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 8px var(--gold);
+    margin-bottom: 6px;
+  }
+  #audio-wrap.armed .audio-label {
+    color: var(--hot-pink);
+    text-shadow: 0 0 10px var(--hot-pink), 0 0 20px var(--danger);
+  }
+  .audio-status {
+    font-family: 'VT323', monospace;
+    font-size: 0.95rem;
+    color: var(--electric);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    min-height: 1.2em;
+  }
+  .audio-links {
+    font-family: 'VT323', monospace;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.1em;
+  }
+  .audio-links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    margin: 0 4px;
+  }
+  .audio-links a:hover { color: var(--gold); text-decoration: underline; }
+</style>
+</head>
+<body data-level="0">
+
+<div class="stars" id="stars"></div>
+
+<header>
+  <h1 class="title">FREAK<br>DETECTOR</h1>
+  <div class="subtitle">slide to detect</div>
+</header>
+
+<div class="meter-wrap">
+  <svg class="meter-svg" viewBox="0 0 300 300">
+    <defs>
+      <linearGradient id="freakGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00f0ff" />
+        <stop offset="33%" stop-color="#ffcc00" />
+        <stop offset="66%" stop-color="#ff1f8f" />
+        <stop offset="100%" stop-color="#ff0040" />
+      </linearGradient>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- Outer dial -->
+    <circle class="meter-bg" cx="150" cy="150" r="135" />
+
+    <!-- Track arc (270° sweep): start at bottom-left, sweep clockwise over the top to bottom-right -->
+    <path class="meter-track" d="M 72.22 227.78 A 110 110 0 1 1 227.78 227.78" />
+    <!-- Fill arc: same direction so stroke-dasharray fills clockwise -->
+    <path class="meter-fill" id="fillArc" d="M 72.22 227.78 A 110 110 0 1 1 227.78 227.78" pathLength="100" stroke-dasharray="0 100" />
+
+    <!-- Tick marks -->
+    <g id="ticks"></g>
+
+    <!-- Hand: white stick + red dot. Coordinates updated directly in JS each frame. -->
+    <line id="handStick" class="hand-stick" x1="150" y1="150" x2="72.22" y2="227.78" />
+    <circle id="handTip" class="hand-tip" cx="72.22" cy="227.78" r="11" />
+    <circle class="needle-pivot" cx="150" cy="150" r="10" />
+
+    <!-- Labels around -->
+    <text class="tick-label" x="60" y="248" text-anchor="middle">NONE</text>
+    <text class="tick-label" x="150" y="32" text-anchor="middle">FREAKY</text>
+    <text class="tick-label" x="240" y="248" text-anchor="middle">SUPER</text>
+  </svg>
+  <div class="freak-label">★ FREAK-O-METER ★</div>
+  <div class="level-readout" id="readout">LVL 0</div>
+</div>
+
+<div class="verdict" id="verdict">awaiting freakiness…</div>
+
+<div class="instructions">
+  <span class="blink">▸</span> slide right to detect freakiness <span class="blink">◂</span>
+</div>
+
+<!-- Slider control -->
+<div id="slider-wrap">
+  <div class="slider-labels">
+    <span>NONE</span>
+    <span>FREAKY</span>
+    <span>SUPER</span>
+  </div>
+  <input type="range" id="freakSlider" min="0" max="100" value="0" step="1" />
+</div>
+
+<!-- Audio player: streams a 30-sec preview of Super Freak from Apple's CDN (legal, no auth).
+     Includes a small "buy on Apple Music" / "Open in Spotify" link to stay within iTunes API terms. -->
+<div id="audio-wrap">
+  <div class="audio-label" id="audioLabel">♫ SUPER FREAK — Rick James ♫</div>
+  <audio id="audioEl" preload="auto"></audio>
+  <div class="audio-status" id="audioStatus">loading preview…</div>
+  <div class="audio-links">
+    <a href="https://music.apple.com/us/album/super-freak/1440873495" target="_blank" rel="noopener">Apple Music ↗</a>
+    <span>·</span>
+    <a href="https://open.spotify.com/track/2dCmGcEOQrMQhMMS8Vj7Ca" target="_blank" rel="noopener">Spotify ↗</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-title">FREAK<br>DETECTOR</div>
+  <div class="overlay-cta">TAP TO START</div>
+</div>
+
+<script>
+(() => {
+  // Scatter twinkling stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 30; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 2.4) + 's';
+    s.style.transform = `scale(${0.4 + Math.random() * 0.8})`;
+    starsEl.appendChild(s);
+  }
+
+  // Tick marks around dial — use angle measured clockwise from north (top), same convention as needle
+  const ticksG = document.getElementById('ticks');
+  for (let i = 0; i <= 10; i++) {
+    const deg = -135 + (i / 10) * 270; // -135° (bottom-left) → 0° (top) → +135° (bottom-right)
+    const rad = deg * Math.PI / 180;
+    const sinA = Math.sin(rad), cosA = Math.cos(rad);
+    const x1 = 150 + sinA * 120;
+    const y1 = 150 - cosA * 120;
+    const r2 = (i % 5 === 0 ? 132 : 128);
+    const x2 = 150 + sinA * r2;
+    const y2 = 150 - cosA * r2;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('class','tick');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke-width', i % 5 === 0 ? 3 : 1.5);
+    ticksG.appendChild(line);
+  }
+
+  // State
+  let level = 0;        // 0..100, eased toward sliderValue
+  let sliderValue = 0;  // 0..100, set directly by slider input
+  let started = false;
+
+  const body = document.body;
+  const overlay = document.getElementById('overlay');
+  const fillArc = document.getElementById('fillArc');
+  const handStick = document.getElementById('handStick');
+  const handTip = document.getElementById('handTip');
+  const readout = document.getElementById('readout');
+  const verdict = document.getElementById('verdict');
+
+  const VERDICTS = [
+    "awaiting freakiness…",
+    "mildly freaky",
+    "she's a very kinky girl…",
+    "the kind you don't take home to mother",
+    "SUPER FREAK ACTIVATED",
+    "🔥 SHE'S SUPER FREAKY YOW 🔥"
+  ];
+
+  /* ----------------- AUDIO: Geiger clicks (Web Audio) + Super Freak (Spotify iframe) ----------------- */
+  const SUPER_THRESHOLD = 92; // slider value at which "SUPER FREAK" zone is reached
+
+  let audioCtx = null;
+  let geigerGain = null;
+  let geigerTimer = null;
+  let geigerActive = false;
+
+  function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    geigerGain = audioCtx.createGain();
+    geigerGain.gain.value = 0.45;
+    geigerGain.connect(audioCtx.destination);
+  }
+
+  // One geiger "click": short noise burst with high-pass filter, very short envelope
+  function playClick() {
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime;
+    const bufferSize = Math.floor(audioCtx.sampleRate * 0.03);
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      // exponential decay envelope for sharp click
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 3000;
+    filter.Q.value = 1.5;
+    const g = audioCtx.createGain();
+    g.gain.value = 1;
+    noise.connect(filter).connect(g).connect(geigerGain);
+    noise.start(t);
+    noise.stop(t + 0.05);
+  }
+
+  // Schedule next click; rate is determined by current sliderValue
+  function scheduleNextClick() {
+    if (!geigerActive) return;
+    // Map slider 1..100 to an interval. Slider 1 = ~1500ms (slow), slider 90 = ~40ms (frantic).
+    // Past SUPER_THRESHOLD we stop ticking (song takes over).
+    const s = Math.min(sliderValue, SUPER_THRESHOLD - 1);
+    if (s < 1) {
+      geigerTimer = setTimeout(scheduleNextClick, 200);
+      return;
+    }
+    // Exponential mapping for nice acceleration feel
+    const norm = s / (SUPER_THRESHOLD - 1); // 0..1
+    const minMs = 35, maxMs = 1600;
+    const interval = maxMs * Math.pow(minMs / maxMs, norm);
+    // Add tiny random jitter so it sounds organic
+    const jitter = interval * 0.12 * (Math.random() - 0.5);
+    playClick();
+    geigerTimer = setTimeout(scheduleNextClick, Math.max(20, interval + jitter));
+  }
+
+  function startGeiger() {
+    if (geigerActive) return;
+    geigerActive = true;
+    scheduleNextClick();
+  }
+
+  function stopGeiger() {
+    geigerActive = false;
+    if (geigerTimer) { clearTimeout(geigerTimer); geigerTimer = null; }
+  }
+
+  /* ----------------- iTunes preview fetch + inline audio playback ----------------- */
+  const audioWrap = document.getElementById('audio-wrap');
+  const audioLabel = document.getElementById('audioLabel');
+  const audioStatus = document.getElementById('audioStatus');
+  const audioEl = document.getElementById('audioEl');
+
+  let previewLoaded = false;
+  let previewPlaying = false;
+  let previewFetchAttempted = false;
+
+  // Helpers: pick the best track and apply its preview URL
+  function applyResults(results) {
+    let pick = results.find(r =>
+      /street songs/i.test(r.collectionName || '') &&
+      /^super freak/i.test(r.trackName || '') &&
+      !/live|remix|club|instrumental/i.test(r.trackName || '')
+    );
+    if (!pick) {
+      pick = results.find(r =>
+        /^super freak/i.test(r.trackName || '') &&
+        /rick james/i.test(r.artistName || '') &&
+        !/live|remix|club|instrumental/i.test(r.trackName || '')
+      );
+    }
+    if (!pick) pick = results[0];
+    if (pick && pick.previewUrl) {
+      audioEl.src = pick.previewUrl;
+      previewLoaded = true;
+      audioStatus.textContent = 'ready — slide to play';
+      return true;
+    }
+    return false;
+  }
+
+  // JSONP fallback: works from file:// and bypasses CORS / many extension blockers
+  function fetchPreviewJSONP() {
+    audioStatus.textContent = 'fetching preview (jsonp)…';
+    const callbackName = 'itunesCb_' + Math.random().toString(36).slice(2, 10);
+    const timeout = setTimeout(() => {
+      if (!previewLoaded) {
+        audioStatus.textContent = 'preview unavailable — see store links below';
+      }
+      cleanup();
+    }, 8000);
+    function cleanup() {
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[callbackName] = (data) => {
+      clearTimeout(timeout);
+      const results = (data && data.results) || [];
+      if (!applyResults(results)) {
+        audioStatus.textContent = 'preview unavailable';
+      }
+      cleanup();
+    };
+    const script = document.createElement('script');
+    script.src = 'https://itunes.apple.com/search?term=' + encodeURIComponent('Super Freak Rick James')
+                + '&entity=song&limit=25&callback=' + callbackName;
+    script.onerror = () => {
+      clearTimeout(timeout);
+      audioStatus.textContent = 'preview unavailable — see store links below';
+      cleanup();
+    };
+    document.head.appendChild(script);
+  }
+
+  // Fetch the Super Freak preview URL from iTunes Search API.
+  function fetchPreview() {
+    if (previewFetchAttempted) return;
+    previewFetchAttempted = true;
+    audioStatus.textContent = 'fetching preview…';
+
+    // Try direct CORS fetch first
+    fetch('https://itunes.apple.com/search?term=' + encodeURIComponent('Super Freak Rick James') + '&entity=song&limit=25')
+      .then(r => r.json())
+      .then(data => {
+        const results = data.results || [];
+        if (!applyResults(results)) {
+          audioStatus.textContent = 'preview unavailable';
+        }
+      })
+      .catch(err => {
+        // CORS / network block — fall back to JSONP, which bypasses CORS
+        console.warn('iTunes CORS fetch failed, trying JSONP:', err);
+        fetchPreviewJSONP();
+      });
+  }
+
+  function startPreview() {
+    if (!previewLoaded || previewPlaying) return;
+    audioEl.currentTime = 0;
+    const p = audioEl.play();
+    if (p && p.catch) {
+      p.then(() => {
+        previewPlaying = true;
+        audioStatus.textContent = '♫ NOW PLAYING ♫';
+      }).catch(err => {
+        audioStatus.textContent = 'tap to play (browser blocked autoplay)';
+        console.warn('audio play blocked:', err);
+      });
+    } else {
+      previewPlaying = true;
+      audioStatus.textContent = '♫ NOW PLAYING ♫';
+    }
+  }
+
+  function stopPreview() {
+    if (!previewPlaying) return;
+    audioEl.pause();
+    audioEl.currentTime = 0;
+    previewPlaying = false;
+  }
+
+  audioEl.addEventListener('ended', () => {
+    previewPlaying = false;
+    audioStatus.textContent = 'preview ended — slide back and forth to replay';
+  });
+
+  // Make the player itself tappable as a fallback if autoplay is blocked
+  audioWrap.addEventListener('click', (e) => {
+    // Don't hijack clicks on the external links
+    if (e.target.closest('a')) return;
+    if (sliderValue >= SUPER_THRESHOLD && previewLoaded && !previewPlaying) {
+      startPreview();
+    }
+  });
+
+  // Decide audio state based on slider position
+  function updateAudioFromSlider() {
+    if (!started) return;
+    if (sliderValue >= SUPER_THRESHOLD) {
+      stopGeiger();
+      audioWrap.classList.add('armed');
+      if (!previewPlaying && previewLoaded) {
+        startPreview();
+      } else if (!previewLoaded) {
+        audioStatus.textContent = 'preview not loaded — see links below';
+      }
+    } else {
+      audioWrap.classList.remove('armed');
+      if (previewPlaying) stopPreview();
+      if (previewLoaded) audioStatus.textContent = 'ready — slide to play';
+      if (sliderValue >= 1) {
+        if (!geigerActive) startGeiger();
+      } else {
+        stopGeiger();
+      }
+    }
+  }
+
+  /* ----------------- INTERACTION: slider controls everything ----------------- */
+  const slider = document.getElementById('freakSlider');
+
+  function start() {
+    if (started) return;
+    started = true;
+    overlay.classList.add('hidden');
+    initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    // Begin fetching the iTunes preview URL (asynchronous, doesn't block UI)
+    fetchPreview();
+    // If user already moved slider before tapping, kick audio off accordingly
+    updateAudioFromSlider();
+  }
+
+  overlay.addEventListener('click', start);
+  overlay.addEventListener('touchstart', (e) => { e.preventDefault(); start(); }, { passive: false });
+
+  slider.addEventListener('input', () => {
+    sliderValue = parseFloat(slider.value);
+    updateAudioFromSlider();
+  });
+
+  function beginRenderLoop() {
+    function tick() {
+      // Ease level toward sliderValue for smooth needle motion
+      level += (sliderValue - level) * 0.22;
+      if (Math.abs(level - sliderValue) < 0.05) level = sliderValue;
+
+      // Update meter fill and needle position
+      fillArc.setAttribute('stroke-dasharray', `${level} ${100 - level}`);
+      const angleDeg = -135 + (level / 100) * 270;
+      const angleRad = angleDeg * Math.PI / 180;
+      const cx = 150, cy = 150, r = 110;
+      const tipX = cx + Math.sin(angleRad) * r;
+      const tipY = cy - Math.cos(angleRad) * r;
+      handStick.setAttribute('x2', tipX);
+      handStick.setAttribute('y2', tipY);
+      handTip.setAttribute('cx', tipX);
+      handTip.setAttribute('cy', tipY);
+      readout.textContent = `LVL ${Math.round(level)}`;
+
+      // Verdict bucket
+      let bucket = 0;
+      if (level >= 5)  bucket = 1;
+      if (level >= 25) bucket = 2;
+      if (level >= 50) bucket = 3;
+      if (level >= 75) bucket = 4;
+      if (level >= SUPER_THRESHOLD) bucket = 5;
+      verdict.textContent = VERDICTS[bucket];
+      body.dataset.level = Math.min(4, bucket);
+
+      // Shake at top tier
+      body.classList.toggle('freaking', level >= SUPER_THRESHOLD);
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  beginRenderLoop();
+})();
+</script>
+</body>
+</html>
