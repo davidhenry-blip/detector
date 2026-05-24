@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Detector</title>
+<title>AI Detector</title>
 <link href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Anton&family=VT323&display=swap" rel="stylesheet">
 <style>
   /* ===== Default palette (overwritten per detector) ===== */
@@ -463,8 +463,8 @@
 
 <!-- ============== HOME SCREEN ============== -->
 <div id="home">
-  <h1 class="home-title">PICK YOUR<br>DETECTOR</h1>
-  <div class="home-tagline">★ how freaky are you today? ★</div>
+  <h1 class="home-title">AI<br>DETECTOR</h1>
+  <div class="home-tagline">★ pick your detector ★</div>
   <div class="tiles" id="tiles"></div>
 </div>
 
@@ -698,6 +698,164 @@
         spotifyUrl: 'https://open.spotify.com/track/4Oun2ylbjFKMPTiaSbbCih',
       },
       emoji: '💦'
+    },
+    {
+      id: 'cat-or-owt',
+      type: 'two-sided',
+      name: 'CAT OR OWT?',
+      title: 'CAT<br>OR OWT?',
+      tagline: '★ which animal are you today? ★',
+      meterLabel: '★ FELINE-CANINE METER ★',
+      // For two-sided: low = left endpoint, mid = center, high = right endpoint
+      labels: { low: 'SUPERCAT', mid: 'NEUTRAL', high: 'OWT' },
+      colors: {
+        c1: '#9d4edd',  // purple (dog side accent)
+        c2: '#82eefd',  // mint (cat side accent)
+        c3: '#ffd166',  // amber (neutral center / border)
+        c4: '#ff006e',  // magenta (max danger)
+        bgDeep: '#0d0a1f',
+        bgMid:  '#1a1233',
+      },
+      // Verdicts climb from center outward; index 0 = neutral, index 5 = max
+      left: {
+        verdicts: [
+          'staring at a wall…',
+          'flicking the tail',
+          'purring mode',
+          'cat is alert',
+          'SUPERCAT POWERS RISING',
+          '🐱 MEOW MEOW MEOW MEOW 🐱'
+        ],
+        song: {
+          artist: 'Geek Music',
+          track:  'The Meow Mix Commercial - Main Theme',
+          album:  'The Meow Mix Commercial',
+          appleUrl:   'https://music.apple.com/us/album/the-meow-mix-commercial-main-theme-single/1388206430',
+          spotifyUrl: 'https://open.spotify.com/album/05YEx9GWAEnGvagncgv8G2',
+        }
+      },
+      right: {
+        verdicts: [
+          'staring at a wall…',
+          'wagging tail',
+          'sniffing around',
+          'dog is alert',
+          'ATOMIC DOG INCOMING',
+          '🐕 BOW WOW WOW YIPPY YO YIPPY YEAH 🐕'
+        ],
+        song: {
+          artist: 'George Clinton',
+          track:  'Atomic Dog',
+          album:  'Computer Games',
+          appleUrl:   'https://music.apple.com/us/album/computer-games/206578272',
+          spotifyUrl: 'https://open.spotify.com/search/Atomic%20Dog%20George%20Clinton',
+        }
+      },
+      emoji: '🐱↔🐕'
+    },
+    {
+      id: 'angel-or-devil',
+      type: 'two-sided',
+      name: 'WHOLESOME OR FREAK?',
+      title: 'WHOLESOME<br>OR FREAK?',
+      tagline: '★ angel on one shoulder, devil on the other ★',
+      meterLabel: '★ MORALITY METER ★',
+      labels: { low: 'WHOLESOME', mid: 'BALANCED', high: 'SUPERFREAK' },
+      colors: {
+        c1: '#ff1f8f',  // hot pink (freak side accent)
+        c2: '#a0d8ff',  // angelic blue (wholesome side accent)
+        c3: '#ffd700',  // halo gold (border / neutral)
+        c4: '#ff003c',  // devil red (max)
+        bgDeep: '#0e0a1a',
+        bgMid:  '#2a1133',
+      },
+      left: {
+        verdicts: [
+          'pondering the cosmos…',
+          'sending kind thoughts',
+          'absolute sweetheart',
+          'literal angel behavior',
+          'HALO IS GLOWING',
+          '😇 I CAN SEE YOUR HALO 😇'
+        ],
+        song: {
+          artist: 'Beyoncé',
+          track:  'Halo',
+          album:  'I AM...SASHA FIERCE',
+          appleUrl:   'https://music.apple.com/us/album/i-am-sasha-fierce-deluxe-version/295783816',
+          spotifyUrl: 'https://open.spotify.com/search/Halo%20Beyonce',
+        }
+      },
+      right: {
+        verdicts: [
+          'pondering the cosmos…',
+          'a little mischievous',
+          "she's a very kinky girl…",
+          "the kind you don't take home to mother",
+          'SUPER FREAK ACTIVATED',
+          "🔥 SHE'S SUPER FREAKY YOW 🔥"
+        ],
+        song: {
+          artist: 'Rick James',
+          track:  'Super Freak',
+          album:  'Street Songs',
+          appleUrl:   'https://music.apple.com/us/album/street-songs/1440873495',
+          spotifyUrl: 'https://open.spotify.com/track/2dCmGcEOQrMQhMMS8Vj7Ca',
+        }
+      },
+      emoji: '😇↔😈'
+    },
+    {
+      id: 'dry-or-juicy',
+      type: 'two-sided',
+      name: 'DRY OR JUICY?',
+      title: 'DRY<br>OR JUICY?',
+      tagline: '★ hydration check ★',
+      meterLabel: '★ MOISTURE METER ★',
+      labels: { low: 'DRY', mid: 'BALANCED', high: 'JUICY' },
+      colors: {
+        c1: '#ff3d8a',  // hot pink (juicy side accent)
+        c2: '#d8b88a',  // sandy tan (dry side accent)
+        c3: '#ffd166',  // amber (border/neutral)
+        c4: '#00bfff',  // deep blue (max wet)
+        bgDeep: '#1a0b1f',
+        bgMid:  '#2a1340',
+      },
+      left: {
+        verdicts: [
+          'normal hydration levels…',
+          'a little spicy',
+          'getting bold',
+          'extra naughty',
+          'LICK IT ACTIVATED',
+          '👅 LICK IT BEFORE YOU KICK IT 👅'
+        ],
+        song: {
+          artist: '20 Fingers',
+          track:  'Lick It (20 Fingers Club Mix)',
+          album:  'Lick It',
+          appleUrl:   'https://music.apple.com/us/album/lick-it/293763644',
+          spotifyUrl: 'https://open.spotify.com/track/0zhXL7ifjAVuDEs0xiXriP',
+        }
+      },
+      right: {
+        verdicts: [
+          'normal hydration levels…',
+          'a little dewy',
+          'getting juicy',
+          'real wet now',
+          'SUPER SOAKER ENGAGED',
+          '💦 THERE\'S SOME WHORES IN THIS HOUSE 💦'
+        ],
+        song: {
+          artist: 'Cardi B',
+          track:  'WAP',
+          album:  'WAP',
+          appleUrl:   'https://music.apple.com/us/album/wap-feat-megan-thee-stallion-single/1526746983',
+          spotifyUrl: 'https://open.spotify.com/track/4Oun2ylbjFKMPTiaSbbCih',
+        }
+      },
+      emoji: '👅↔💦'
     }
   ];
 
@@ -766,10 +924,17 @@
     tile.style.setProperty('--tc1', d.colors.c1);
     tile.style.setProperty('--tc2', d.colors.c2);
     tile.style.setProperty('--tc3', d.colors.c3);
+    const isTwoSided = d.type === 'two-sided';
+    const songLine = isTwoSided
+      ? `${d.left.song.track} ↔ ${d.right.song.track}`
+      : `${d.song.track} — ${d.song.artist}`;
+    const nameLine = isTwoSided
+      ? d.name  // already includes spaces/punct, don't append "DETECTOR"
+      : `${d.name}<br>DETECTOR`;
     tile.innerHTML = `
       <div class="tile-emoji">${d.emoji}</div>
-      <div class="tile-name">${d.name}<br>DETECTOR</div>
-      <div class="tile-song">${d.song.track} — ${d.song.artist}</div>
+      <div class="tile-name">${nameLine}</div>
+      <div class="tile-song">${songLine}</div>
     `;
     tile.addEventListener('click', () => loadDetector(d));
     tilesEl.appendChild(tile);
@@ -778,9 +943,10 @@
   backBtn.addEventListener('click', () => returnHome());
 
   // ============== STATE ==============
-  const SUPER_THRESHOLD = 92;
+  const SUPER_THRESHOLD = 92;       // absolute distance from inactive end to trigger song (one-sided)
+  const TWO_SIDED_THRESHOLD = 46;   // distance from center 50 to trigger song (two-sided; ~96/100 absolute)
   let currentDetector = null;
-  let level = 0;
+  let level = 0;            // 0..100 visual position (same scale for both modes)
   let sliderValue = 0;
   let started = false;
 
@@ -789,13 +955,19 @@
   let beepTimer = null;
   let beepActive = false;
 
+  // For one-sided: a single preview URL. For two-sided: two URLs, one per side.
+  let previewUrlLeft = null;
+  let previewUrlRight = null;
+  let previewUrlSingle = null;
   let previewLoaded = false;
   let previewPlaying = false;
+  let activeSide = null;    // 'left' or 'right' for two-sided when above threshold; null otherwise
   let previewFetchAttempted = false;
 
   // ============== LOAD/UNLOAD DETECTOR ==============
   function loadDetector(d) {
     currentDetector = d;
+    const isTwoSided = d.type === 'two-sided';
     // Apply color palette via CSS variables
     document.documentElement.style.setProperty('--c1', d.colors.c1);
     document.documentElement.style.setProperty('--c2', d.colors.c2);
@@ -813,21 +985,36 @@
     sliderL.textContent  = d.labels.low;
     sliderM.textContent  = d.labels.mid;
     sliderR.textContent  = d.labels.high;
-    audioLabel.textContent = `♫ ${d.song.track.toUpperCase()} — ${d.song.artist} ♫`;
-    audioLinks.innerHTML = `
-      <a href="${d.song.appleUrl}" target="_blank" rel="noopener">Apple Music ↗</a>
-      <span>·</span>
-      <a href="${d.song.spotifyUrl}" target="_blank" rel="noopener">Spotify ↗</a>
-    `;
+    // Audio label/links: two-sided shows both songs
+    if (isTwoSided) {
+      audioLabel.textContent = `♫ ${d.left.song.track.toUpperCase()} ↔ ${d.right.song.track.toUpperCase()} ♫`;
+      audioLinks.innerHTML = `
+        <a href="${d.left.song.appleUrl}" target="_blank" rel="noopener">← ${d.left.song.track} ↗</a>
+        <span>·</span>
+        <a href="${d.right.song.appleUrl}" target="_blank" rel="noopener">${d.right.song.track} → ↗</a>
+      `;
+    } else {
+      audioLabel.textContent = `♫ ${d.song.track.toUpperCase()} — ${d.song.artist} ♫`;
+      audioLinks.innerHTML = `
+        <a href="${d.song.appleUrl}" target="_blank" rel="noopener">Apple Music ↗</a>
+        <span>·</span>
+        <a href="${d.song.spotifyUrl}" target="_blank" rel="noopener">Spotify ↗</a>
+      `;
+    }
     document.title = `${d.name} Detector`;
-    // Reset slider
-    slider.value = 0;
-    sliderValue = 0;
-    level = 0;
+    // Reset slider: 0 for one-sided (starts at NONE), 50 for two-sided (starts at center)
+    const startValue = isTwoSided ? 50 : 0;
+    slider.value = startValue;
+    sliderValue = startValue;
+    level = startValue;
     // Reset audio state
     if (previewPlaying) { audioEl.pause(); audioEl.currentTime = 0; previewPlaying = false; }
     audioEl.removeAttribute('src');
     previewLoaded = false;
+    previewUrlLeft = null;
+    previewUrlRight = null;
+    previewUrlSingle = null;
+    activeSide = null;
     previewFetchAttempted = false;
     audioStatus.textContent = 'loading preview…';
     audioWrap.classList.remove('armed');
@@ -848,6 +1035,7 @@
     body.classList.add('is-home');
     body.classList.remove('freaking');
     overlay.classList.add('hidden');
+    document.title = 'AI Detector';
     history.replaceState(null, '', '#');
   }
 
@@ -860,12 +1048,33 @@
     beepGain.connect(audioCtx.destination);
   }
 
+  // Returns 0..(SUPER_THRESHOLD-1)+ — "intensity" used to pace beeps and verdict tier
+  function activeIntensity() {
+    if (!currentDetector) return 0;
+    if (currentDetector.type === 'two-sided') {
+      // 0 at center, max at edges; clamp to (TWO_SIDED_THRESHOLD-1)
+      const dist = Math.abs(sliderValue - 50);
+      // Rescale 0..46 to 0..(SUPER_THRESHOLD-1) so beep math stays the same
+      return Math.min(dist / TWO_SIDED_THRESHOLD * (SUPER_THRESHOLD - 1), SUPER_THRESHOLD - 1);
+    }
+    return Math.min(sliderValue, SUPER_THRESHOLD - 1);
+  }
+
+  // True if the slider is currently past the trigger threshold (song should play)
+  function pastThreshold() {
+    if (!currentDetector) return false;
+    if (currentDetector.type === 'two-sided') {
+      return Math.abs(sliderValue - 50) >= TWO_SIDED_THRESHOLD;
+    }
+    return sliderValue >= SUPER_THRESHOLD;
+  }
+
   // One short high-pitched bleep (sine wave with quick envelope)
   function playBeep() {
     if (!audioCtx) return;
     const t = audioCtx.currentTime;
-    // Pitch climbs with slider value — adds excitement as it speeds up
-    const norm = Math.min(sliderValue, SUPER_THRESHOLD - 1) / (SUPER_THRESHOLD - 1);
+    const intensity = activeIntensity();
+    const norm = intensity / (SUPER_THRESHOLD - 1);
     const baseFreq = 880;     // A5
     const topFreq  = 2200;    // ~C#7
     const freq = baseFreq + (topFreq - baseFreq) * norm;
@@ -875,8 +1084,8 @@
     osc.frequency.value = freq;
     const g = audioCtx.createGain();
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(1.0, t + 0.005);  // very quick attack
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08); // 80ms tone
+    g.gain.exponentialRampToValueAtTime(1.0, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
 
     osc.connect(g).connect(beepGain);
     osc.start(t);
@@ -885,12 +1094,12 @@
 
   function scheduleNextBeep() {
     if (!beepActive) return;
-    const s = Math.min(sliderValue, SUPER_THRESHOLD - 1);
-    if (s < 1) {
+    const intensity = activeIntensity();
+    if (intensity < 1) {
       beepTimer = setTimeout(scheduleNextBeep, 200);
       return;
     }
-    const norm = s / (SUPER_THRESHOLD - 1);
+    const norm = intensity / (SUPER_THRESHOLD - 1);
     const minMs = 50, maxMs = 1400;
     const interval = maxMs * Math.pow(minMs / maxMs, norm);
     const jitter = interval * 0.08 * (Math.random() - 0.5);
@@ -909,67 +1118,79 @@
     if (beepTimer) { clearTimeout(beepTimer); beepTimer = null; }
   }
 
-  // ============== AUDIO: iTunes preview (per detector) ==============
-  function applyResults(results, d) {
+  // ============== AUDIO: iTunes preview (per song) ==============
+  // Returns a Promise that resolves to a preview URL string (or null if not found).
+  function fetchPreviewUrl(song) {
     const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const trackRe  = new RegExp('^' + esc(d.song.track), 'i');
-    const albumRe  = new RegExp(esc(d.song.album), 'i');
-    const artistRe = new RegExp(esc(d.song.artist), 'i');
-    let pick = results.find(r =>
-      albumRe.test(r.collectionName || '') &&
-      trackRe.test(r.trackName || '') &&
-      !/live|remix|club|instrumental|version/i.test(r.trackName || '')
-    );
-    if (!pick) {
-      pick = results.find(r =>
+    const trackRe  = new RegExp('^' + esc(song.track), 'i');
+    const albumRe  = new RegExp(esc(song.album), 'i');
+    const artistRe = new RegExp(esc(song.artist), 'i');
+    const trackAnyRe = new RegExp(esc(song.track), 'i');
+
+    function pickFromResults(results) {
+      let pick = results.find(r =>
+        albumRe.test(r.collectionName || '') &&
         trackRe.test(r.trackName || '') &&
-        artistRe.test(r.artistName || '') &&
         !/live|remix|club|instrumental|version/i.test(r.trackName || '')
       );
+      if (!pick) {
+        pick = results.find(r =>
+          trackRe.test(r.trackName || '') &&
+          artistRe.test(r.artistName || '') &&
+          !/live|remix|club|instrumental|version/i.test(r.trackName || '')
+        );
+      }
+      if (!pick) {
+        pick = results.find(r =>
+          trackAnyRe.test(r.trackName || '') &&
+          artistRe.test(r.artistName || '')
+        );
+      }
+      if (!pick) pick = results[0];
+      return (pick && pick.previewUrl) ? pick.previewUrl : null;
     }
-    if (!pick) {
-      const trackAnyRe = new RegExp(esc(d.song.track), 'i');
-      pick = results.find(r =>
-        trackAnyRe.test(r.trackName || '') &&
-        artistRe.test(r.artistName || '')
-      );
-    }
-    if (!pick) pick = results[0];
-    if (pick && pick.previewUrl) {
-      audioEl.src = pick.previewUrl;
-      previewLoaded = true;
-      audioStatus.textContent = 'ready — slide to play';
-      return true;
-    }
-    return false;
-  }
 
-  function fetchPreviewJSONP(d) {
-    audioStatus.textContent = 'fetching preview (jsonp)…';
-    const callbackName = 'itunesCb_' + Math.random().toString(36).slice(2, 10);
-    const timeout = setTimeout(() => {
-      if (!previewLoaded) audioStatus.textContent = 'preview unavailable — see store links below';
-      cleanup();
-    }, 8000);
-    function cleanup() {
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-    window[callbackName] = (data) => {
-      clearTimeout(timeout);
-      const results = (data && data.results) || [];
-      if (!applyResults(results, d)) audioStatus.textContent = 'preview unavailable';
-      cleanup();
-    };
-    const script = document.createElement('script');
-    script.src = 'https://itunes.apple.com/search?term=' + encodeURIComponent(d.song.track + ' ' + d.song.artist)
-                + '&entity=song&limit=25&callback=' + callbackName;
-    script.onerror = () => {
-      clearTimeout(timeout);
-      audioStatus.textContent = 'preview unavailable — see store links below';
-      cleanup();
-    };
-    document.head.appendChild(script);
+    const url = 'https://itunes.apple.com/search?term=' + encodeURIComponent(song.track + ' ' + song.artist) + '&entity=song&limit=25';
+
+    return new Promise((resolve) => {
+      // Try CORS fetch first
+      fetch(url)
+        .then(r => r.json())
+        .then(data => resolve(pickFromResults((data && data.results) || [])))
+        .catch(() => {
+          // Fall back to JSONP for environments where CORS is blocked
+          const callbackName = 'itunesCb_' + Math.random().toString(36).slice(2, 10);
+          let done = false;
+          const timeout = setTimeout(() => {
+            if (done) return;
+            done = true;
+            cleanup();
+            resolve(null);
+          }, 8000);
+          function cleanup() {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+          }
+          window[callbackName] = (data) => {
+            if (done) return;
+            done = true;
+            clearTimeout(timeout);
+            const r = pickFromResults((data && data.results) || []);
+            cleanup();
+            resolve(r);
+          };
+          const script = document.createElement('script');
+          script.src = url + '&callback=' + callbackName;
+          script.onerror = () => {
+            if (done) return;
+            done = true;
+            clearTimeout(timeout);
+            cleanup();
+            resolve(null);
+          };
+          document.head.appendChild(script);
+        });
+    });
   }
 
   function fetchPreview() {
@@ -977,22 +1198,47 @@
     previewFetchAttempted = true;
     audioStatus.textContent = 'fetching preview…';
     const d = currentDetector;
-    fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(d.song.track + ' ' + d.song.artist) + '&entity=song&limit=25')
-      .then(r => r.json())
-      .then(data => {
-        const results = data.results || [];
-        if (!applyResults(results, d)) audioStatus.textContent = 'preview unavailable';
-      })
-      .catch(err => {
-        console.warn('iTunes CORS fetch failed, trying JSONP:', err);
-        fetchPreviewJSONP(d);
+    if (d.type === 'two-sided') {
+      // Fetch both songs in parallel
+      Promise.all([
+        fetchPreviewUrl(d.left.song),
+        fetchPreviewUrl(d.right.song)
+      ]).then(([leftUrl, rightUrl]) => {
+        previewUrlLeft = leftUrl;
+        previewUrlRight = rightUrl;
+        if (leftUrl && rightUrl) {
+          previewLoaded = true;
+          audioStatus.textContent = 'ready — slide left or right';
+        } else if (leftUrl || rightUrl) {
+          previewLoaded = true;
+          audioStatus.textContent = 'partial preview — one song unavailable';
+        } else {
+          audioStatus.textContent = 'previews unavailable — see store links';
+        }
       });
+    } else {
+      fetchPreviewUrl(d.song).then(url => {
+        previewUrlSingle = url;
+        if (url) {
+          audioEl.src = url;
+          previewLoaded = true;
+          audioStatus.textContent = 'ready — slide to play';
+        } else {
+          audioStatus.textContent = 'preview unavailable — see store links';
+        }
+      });
+    }
   }
 
-  function startPreview() {
-    if (!previewLoaded || previewPlaying) return;
+  function startPreviewWithUrl(url, side) {
+    if (!url) return;
+    // If audio is already playing this exact source, do nothing
+    if (previewPlaying && audioEl.src === url) return;
+    if (previewPlaying) { audioEl.pause(); previewPlaying = false; }
+    audioEl.src = url;
     audioEl.currentTime = 0;
     const p = audioEl.play();
+    activeSide = side || null;
     if (p && p.catch) {
       p.then(() => {
         previewPlaying = true;
@@ -1007,21 +1253,41 @@
     }
   }
 
+  function startPreview() {
+    if (!previewLoaded || previewPlaying) return;
+    const d = currentDetector;
+    if (d && d.type === 'two-sided') {
+      // Pick based on which side of center we're on
+      if (sliderValue < 50 && previewUrlLeft)  startPreviewWithUrl(previewUrlLeft,  'left');
+      else if (sliderValue > 50 && previewUrlRight) startPreviewWithUrl(previewUrlRight, 'right');
+    } else if (previewUrlSingle) {
+      startPreviewWithUrl(previewUrlSingle, null);
+    }
+  }
+
   function stopPreview() {
     if (!previewPlaying) return;
     audioEl.pause();
     audioEl.currentTime = 0;
     previewPlaying = false;
+    activeSide = null;
   }
 
   audioEl.addEventListener('ended', () => {
     previewPlaying = false;
+    activeSide = null;
     audioStatus.textContent = 'preview ended — slide back to replay';
   });
 
   audioWrap.addEventListener('click', (e) => {
     if (e.target.closest('a')) return;
-    if (sliderValue >= SUPER_THRESHOLD && previewLoaded && !previewPlaying) {
+    // For two-sided: check if we're past the threshold on either side
+    const d = currentDetector;
+    if (!d || !previewLoaded || previewPlaying) return;
+    if (d.type === 'two-sided') {
+      const dist = Math.abs(sliderValue - 50);
+      if (dist >= TWO_SIDED_THRESHOLD) startPreview();
+    } else if (sliderValue >= SUPER_THRESHOLD) {
       startPreview();
     }
   });
@@ -1029,16 +1295,34 @@
   // ============== INTERACTION ==============
   function updateAudioFromSlider() {
     if (!started) return;
-    if (sliderValue >= SUPER_THRESHOLD) {
+    const d = currentDetector;
+    const isTwoSided = d && d.type === 'two-sided';
+
+    if (pastThreshold()) {
       stopBeeps();
       audioWrap.classList.add('armed');
-      if (!previewPlaying && previewLoaded) startPreview();
-      else if (!previewLoaded) audioStatus.textContent = 'preview not loaded — see links';
+      if (previewLoaded) {
+        // For two-sided: if we crossed sides while playing, switch songs
+        if (isTwoSided && previewPlaying) {
+          const wantSide = sliderValue < 50 ? 'left' : 'right';
+          if (activeSide && activeSide !== wantSide) {
+            stopPreview();
+            startPreview();
+          }
+        } else if (!previewPlaying) {
+          startPreview();
+        }
+      } else {
+        audioStatus.textContent = 'preview not loaded — see links';
+      }
     } else {
       audioWrap.classList.remove('armed');
       if (previewPlaying) stopPreview();
-      if (previewLoaded) audioStatus.textContent = 'ready — slide to play';
-      if (sliderValue >= 1) {
+      if (previewLoaded) {
+        audioStatus.textContent = isTwoSided ? 'ready — slide left or right' : 'ready — slide to play';
+      }
+      // Beeps run anytime intensity is above zero (not in neutral zone)
+      if (activeIntensity() >= 1) {
         if (!beepActive) startBeeps();
       } else {
         stopBeeps();
@@ -1069,7 +1353,24 @@
     level += (sliderValue - level) * 0.22;
     if (Math.abs(level - sliderValue) < 0.05) level = sliderValue;
 
-    fillArc.setAttribute('stroke-dasharray', `${level} ${100 - level}`);
+    const d = currentDetector;
+    const isTwoSided = d && d.type === 'two-sided';
+
+    // Arc fill
+    if (isTwoSided) {
+      // Fill from center (50) outward to current level position
+      const lo = Math.min(level, 50);
+      const hi = Math.max(level, 50);
+      const fillLen = Math.max(0, hi - lo);
+      fillArc.setAttribute('stroke-dasharray', `${fillLen} ${100 - fillLen}`);
+      fillArc.setAttribute('stroke-dashoffset', `${-lo}`);
+    } else {
+      // Fill from start (NONE end) up to level
+      fillArc.setAttribute('stroke-dasharray', `${level} ${100 - level}`);
+      fillArc.setAttribute('stroke-dashoffset', '0');
+    }
+
+    // Needle position: 0 → -135° (bottom-left); 50 → 0° (top); 100 → +135° (bottom-right)
     const angleDeg = -135 + (level / 100) * 270;
     const angleRad = angleDeg * Math.PI / 180;
     const tipX = 150 + Math.sin(angleRad) * 110;
@@ -1078,18 +1379,42 @@
     handStick.setAttribute('y2', tipY);
     handTip.setAttribute('cx', tipX);
     handTip.setAttribute('cy', tipY);
-    readout.textContent = `LVL ${Math.round(level)}`;
 
-    if (currentDetector) {
+    // Readout
+    if (isTwoSided) {
+      const dist = Math.abs(level - 50);
+      readout.textContent = `LVL ${Math.round(dist * 2)}`; // 0..100 scale based on distance
+    } else {
+      readout.textContent = `LVL ${Math.round(level)}`;
+    }
+
+    // Verdict
+    if (d) {
       let bucket = 0;
-      if (level >= 5)  bucket = 1;
-      if (level >= 25) bucket = 2;
-      if (level >= 50) bucket = 3;
-      if (level >= 75) bucket = 4;
-      if (level >= SUPER_THRESHOLD) bucket = 5;
-      verdict.textContent = currentDetector.verdicts[bucket];
+      let verdictsArr;
+      if (isTwoSided) {
+        const dist = Math.abs(level - 50); // 0..50
+        // Scale buckets to 0..50 range: tier 5 at dist >= 46 (matches TWO_SIDED_THRESHOLD)
+        if (dist >= 2.5)  bucket = 1;
+        if (dist >= 12.5) bucket = 2;
+        if (dist >= 25)   bucket = 3;
+        if (dist >= 37.5) bucket = 4;
+        if (dist >= TWO_SIDED_THRESHOLD) bucket = 5;
+        verdictsArr = level < 50 ? d.left.verdicts : d.right.verdicts;
+      } else {
+        if (level >= 5)  bucket = 1;
+        if (level >= 25) bucket = 2;
+        if (level >= 50) bucket = 3;
+        if (level >= 75) bucket = 4;
+        if (level >= SUPER_THRESHOLD) bucket = 5;
+        verdictsArr = d.verdicts;
+      }
+      verdict.textContent = verdictsArr[bucket];
       body.dataset.level = Math.min(4, bucket);
-      body.classList.toggle('freaking', level >= SUPER_THRESHOLD);
+      const triggered = isTwoSided
+        ? Math.abs(level - 50) >= TWO_SIDED_THRESHOLD
+        : level >= SUPER_THRESHOLD;
+      body.classList.toggle('freaking', triggered);
     }
 
     requestAnimationFrame(tick);
